@@ -1,11 +1,13 @@
 import { useQuery } from '@tanstack/react-query';
 import React, { useState } from 'react';
 import Loading from './Loading';
+import Pagination from './Pagination';
 
 const Users = () => {
      const [open, setOpen] = useState(false)
      const [toggleState, setToggleState] = useState();
-     // console.log(toggleState)
+     const [currentPage, setCurrentPage] = useState(1);
+     
 
      const hanldeUser = (toggleId) => {
           setToggleState(toggleId)
@@ -21,6 +23,10 @@ const Users = () => {
           }
      })
 
+     const lastPostIndex = currentPage * 3;
+     const firstPostIndex = lastPostIndex - 3;
+     const currentPosts = users.slice(firstPostIndex, lastPostIndex)
+
      if(isLoading){
           return <div className='w-full h-screen flex justify-center items-center'>
                <Loading></Loading>
@@ -30,7 +36,7 @@ const Users = () => {
           <div className='w-full bg-slate-300/30'>
                <div className='mx-2 sm:mx-6 md:mx-12 lg:max-w-5xl lg:mx-auto py-5'>
                     {
-                         users.map(user => <div key={user.id} className='my-8 py-5 md:py-8 px-3 md:px-8 bg-white rounded-md shadow-sm'>
+                         currentPosts.map(user => <div key={user.id} className='my-8 py-5 md:py-8 px-3 md:px-8 bg-white rounded-md shadow-sm'>
                               <div className=' grid grid-cols-2 gap-4  sm:grid-cols-5 items-center w-full '>
                                    <div className='text-sm'>{user?.name}</div>
                                    <div>
@@ -49,8 +55,8 @@ const Users = () => {
 
                               </div>
                               <div className={toggleState === user.id && open ? 'block' : 'hidden'}>
-                                   {
-                                        <div className='border mt-5 rounded-md shadow-md w-full p-5 md:px-12 md:py-8'>
+                                   
+                                        <div className='border mt-5 rounded-md w-full p-5 md:px-12 md:py-8'>
                                              <p className='font-semibold text-sm'>Description</p>
                                              <p className='text-sm mb-4'>{user.company.name + ' company owner'} </p>
                                              <div className=' grid grid-cols-1 md:grid-cols-2'>
@@ -76,10 +82,14 @@ const Users = () => {
                                                   </div>
                                              </div>
                                         </div>
-                                   }
+                                   
                               </div>
                          </div>)
                     }
+                    <Pagination 
+                         totalPost={users.length}
+
+                    />
 
                </div>
           </div>
