@@ -3,6 +3,13 @@ import React, { useState } from 'react';
 
 const Users = () => {
      const [open, setOpen] = useState(false)
+     const [toggleState, setToggleState] = useState();
+     // console.log(toggleState)
+
+     const hanldeUser = (toggleId) => {
+          setToggleState(toggleId)
+          setOpen(!open)
+     }
      const { data: users = [] } = useQuery({
           queryKey: ["users"],
           queryFn: async () => {
@@ -67,7 +74,7 @@ const Users = () => {
                          //    </div>)
                     }
                     {
-                         users.map(user => <div className='my-8 py-8 px-8 bg-white rounded-md shadow-sm'>
+                         users.map(user => <div className='my-8 py-5 md:py-8 px-3 md:px-8 bg-white rounded-md shadow-sm'>
                               <div className=' grid grid-cols-5 items-center w-full '>
                                    <div className='text-sm'>{user?.name}</div>
                                    <div>
@@ -76,18 +83,18 @@ const Users = () => {
                                    </div>
                                    <div>
                                         <p className='font-semibold'>CITY</p>
-                                        <p>{user?.address?.city}</p>
+                                        <p className='text-sm'>{user?.address?.city}</p>
                                    </div>
                                    <div>
                                         <p className='font-semibold'>STREET</p>
-                                        <p>{user?.address?.street}</p>
+                                        <p className='text-sm'>{user?.address?.street}</p>
                                    </div>
-                                   <div className='text-center'><button onClick={() => setOpen(!open)} className='bg-yellow-500 px-3 py-1 rounded-md'>Details</button></div>
-                                   
+                                   <div className='text-center'><button onClick={() => hanldeUser(user.id)} className='bg-yellow-500 px-4 py-2 rounded-md text-sm font-semibold'>Details</button></div>
+
                               </div>
-                              <div>
-                              {
-                                        open && <div className='border'>
+                              <div className={toggleState === user.id && open ? 'inline-block' : 'hidden'}>
+                                   {
+                                        <div className='border'>
                                              <p>hello</p>
                                         </div>
                                    }
