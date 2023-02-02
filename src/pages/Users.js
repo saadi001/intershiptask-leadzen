@@ -1,5 +1,6 @@
 import { useQuery } from '@tanstack/react-query';
 import React, { useState } from 'react';
+import Loading from './Loading';
 
 const Users = () => {
      const [open, setOpen] = useState(false)
@@ -10,92 +11,70 @@ const Users = () => {
           setToggleState(toggleId)
           setOpen(!open)
      }
-     const { data: users = [] } = useQuery({
+     const { data: users = [], isLoading } = useQuery({
           queryKey: ["users"],
           queryFn: async () => {
                const res = await fetch('https://jsonplaceholder.typicode.com/users')
                const data = await res.json()
-               console.log(data)
+               // console.log(data)
                return data;
           }
      })
+
+     if(isLoading){
+          return <div className='w-full h-screen flex justify-center items-center'>
+               <Loading></Loading>
+          </div>
+     }
      return (
           <div className='w-full bg-slate-300/30'>
                <div className='mx-2 sm:mx-6 md:mx-12 lg:max-w-5xl lg:mx-auto py-5'>
                     {
-                         // users.map(user => <div key={user.id} className='flex  my-8 py-8 px-5 justify-between items-center bg-white rounded-md shadow-sm '>
-                         //      <div className='text-sm'>{user?.name}</div>
-                         //      <div>
-                         //           <p className='font-semibold'>CONTACT</p>
-                         //           <p className='text-sm'>{user?.phone}</p>
-                         //      </div>
-                         //      <div>
-                         //           <p className='font-semibold'>CITY</p>
-                         //           <p>{user?.address?.city}</p>
-                         //      </div>
-                         //      <div>
-                         //           <p className='font-semibold'>STREET</p>
-                         //           <p>{user?.address?.street}</p>
-                         //      </div>
-                         //      <div><button className='bg-yellow-500 px-3 py-1 rounded-md'>details</button></div>
-                         // </div>)
-                    }
-                    {
-                         //      users.map(user=> <div className="overflow-x-auto  md:pl-12 sm:pl-5 bg-white rounded-md shadow-sm my-8 py-3 ">
-                         //      <table className="table-fixed w-full my-3 ">
-                         //        {/* <!-- head --> */}
-                         //        <thead>
-                         //          <tr>
-                         //            <th></th>
-                         //            <th className='text-start'>CONTACT</th>
-                         //            <th className='text-start'>CITY</th>
-                         //            <th className='text-start'>STREET</th>
-                         //          </tr>
-                         //        </thead>
-                         //        <tbody>
-                         //          {/* <!-- row 1 --> */}
-                         //          <tr className=''>
-                         //            <td className='text-sm'>{user?.name}</td>
-                         //            <td className='text-sm'>{user?.phone}</td>
-                         //            <td className='text-sm'>{user?.address?.city}</td>
-                         //            <td className='text-sm'>{user?.address?.street}</td>
-                         //            <td><button onClick={()=>setOpen(!open)} className='bg-yellow-500 px-3 py-1 rounded-md'>Details</button></td>
-                         //          </tr>
-
-                         //        </tbody>
-                         //      </table>
-                         //      <div>
-                         //          {
-                         //           open && <div>
-                         //                <p></p>
-                         //           </div>
-                         //          }
-                         //      </div>
-                         //    </div>)
-                    }
-                    {
-                         users.map(user => <div className='my-8 py-5 md:py-8 px-3 md:px-8 bg-white rounded-md shadow-sm'>
-                              <div className=' grid grid-cols-5 items-center w-full '>
+                         users.map(user => <div key={user.id} className='my-8 py-5 md:py-8 px-3 md:px-8 bg-white rounded-md shadow-sm'>
+                              <div className=' grid grid-cols-2 gap-4  sm:grid-cols-5 items-center w-full '>
                                    <div className='text-sm'>{user?.name}</div>
                                    <div>
-                                        <p className='font-semibold'>CONTACT</p>
-                                        <p className='text-sm'>{user?.phone}</p>
+                                        <p className='font-semibold text-sm sm:text-base'>CONTACT</p>
+                                        <p className='md:text-sm text-xs'>{user?.phone}</p>
                                    </div>
                                    <div>
-                                        <p className='font-semibold'>CITY</p>
-                                        <p className='text-sm'>{user?.address?.city}</p>
+                                        <p className='font-semibold text-sm sm:text-base'>CITY</p>
+                                        <p className='md:text-sm text-xs'>{user?.address?.city}</p>
                                    </div>
                                    <div>
-                                        <p className='font-semibold'>STREET</p>
-                                        <p className='text-sm'>{user?.address?.street}</p>
+                                        <p className='font-semibold text-sm sm:text-base'>STREET</p>
+                                        <p className='md:text-sm text-xs'>{user?.address?.street}</p>
                                    </div>
-                                   <div className='text-center'><button onClick={() => hanldeUser(user.id)} className='bg-yellow-500 px-4 py-2 rounded-md text-sm font-semibold'>Details</button></div>
+                                   <div className='sm:text-center'><button onClick={() => hanldeUser(user.id)} className='bg-red-600 text-white px-4 py-2 rounded-2xl text-sm font-semibold'>{open && toggleState === user.id ? 'Hide details' : 'View details'}</button></div>
 
                               </div>
-                              <div className={toggleState === user.id && open ? 'inline-block' : 'hidden'}>
+                              <div className={toggleState === user.id && open ? 'block' : 'hidden'}>
                                    {
-                                        <div className='border'>
-                                             <p>hello</p>
+                                        <div className='border mt-5 rounded-md shadow-md w-full p-5 md:px-12 md:py-8'>
+                                             <p className='font-semibold text-sm'>Description</p>
+                                             <p className='text-sm mb-4'>{user.company.name + ' company owner'} </p>
+                                             <div className=' grid grid-cols-1 md:grid-cols-2'>
+                                                  <div>
+                                                       <p className='font-semibold text-sm'>Contact Person</p>
+                                                       <p className='text-sm mb-2'>{user.name}</p>
+                                                       <p className='font-semibold text-sm'>Username</p>
+                                                       <p className='text-sm mb-2'>{user.username}</p>
+                                                       <p className='font-semibold text-sm'>Emails</p>
+                                                       <p className='text-sm mb-2'>{user.email}</p>
+                                                       <p className='font-semibold text-sm'>Phones</p>
+                                                       <p className='text-sm mb-2'>{user.phone}</p>
+                                                  </div>
+                                                  <div>
+                                                       <p className='font-semibold text-sm'>Street</p>
+                                                       <p className='text-sm mb-2'>{user.address.street}</p>
+                                                       <p className='font-semibold text-sm'>City</p>
+                                                       <p className='text-sm mb-2'>{user.address?.city}</p>
+                                                       <p className='font-semibold text-sm'>Zip code</p>
+                                                       <p className='text-sm mb-2'>{user.address.zipcode}</p>
+                                                       <p className='font-semibold text-sm'>Website</p>
+                                                       <p className='text-sm mb-2'>{user?.website}</p>
+                                                  </div>
+                                             </div>
                                         </div>
                                    }
                               </div>
